@@ -18,7 +18,7 @@
         var special = '-';
 
         function updateSliderLabel() {
-          document.getElementById("lengthslider").innerHTML = "Password Length (" + document.getElementById("length").value + ")";
+          document.getElementById("lengthslider").innerHTML = "(" + document.getElementById("length").value + ")";
         }
 
         window.onload = updateSliderLabel;
@@ -232,6 +232,10 @@
         line-height: 1.0em;
       }
 
+      .slideritem {
+        margin-bottom: -1px;
+      }
+
       @media only screen and (max-width: 600px) {
         .header h1 {
           display: none;
@@ -248,6 +252,10 @@
         .textbox {
           height: 34px;
           font-size: 14pt;
+        }
+
+        .slideritem {
+          margin-bottom: -3px;
         }
       }
 
@@ -279,8 +287,9 @@
             </div>
 
             <div class="slider">
+              <label for="length">Password Length</label>
+              <input class="slideritem" type="range" id="length" name="length" min="6" max="30" value="16" oninput="sliderChange()">
               <label for="length" id="lengthslider"></label>
-              <input type="range" id="length" name="length" min="6" max="30" value="16" oninput="sliderChange()">
             </div>
 
             <div class="checkbox">
