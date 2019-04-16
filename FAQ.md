@@ -1,0 +1,12 @@
+
+## About
+
+SaltyPass helps you generate passwords for all of the websites you visit. Unlike traditional password managers, SaltyPass does not actually store, save or manage any passwords for you. Instead, SaltyPass is a repeatable algorithm that you can use to generate unique passwords for all of your websites. Instead of storing each website's password in a password manager or writing it down on a piece of paper, you can look it up (re-generate it) from anywhere you have internet access.
+
+The problem users face today is how to efficiently yet securely manage all of their passwords for all of the websites they visit. To simplify things, many people simply re-use one password on multiple websites. Unfortunately, this means that if a hacker gains access to a password on one of their websites, all of their accounts could be vulnerable, since many people also use the same email address or login name on all of their websites. Recently, this has become an alarming problem due to several high-profile password breaches on websites such as LinkedIn, Yahoo, Evernote and many others.
+
+SaltyPass helps you avoid password re-use over multiple websites by having you come up with a Master Password that is known only to you (and you never disclose it to anyone or use it anywhere else). When a password for a new website is needed, such as the first time you visit foo.com, SaltyPass combines the your Master Password with the website's name (foo.com), and inputs this into a one-way cryptographic hash function, the output of which can be used as a password for the website (the Salted Password). This algorithm is deterministic, so the same Salted Password is generated every time. And since the website name is used as an input to the algorithm, the Salted Password is different for each website.
+
+The benefit of this is that you just have a single Master Password to remember. Since you never disclose it to anyone else or use it for any reason except for on the SaltyPass website to generate a Salted Password, it cannot be stolen from you even if any of the websites you generated a password for has a security breach.
+
+Detailed documentation can be [found here](https://saltthepass.com/#help-data-security).
