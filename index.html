@@ -211,6 +211,7 @@
         color: white;
         margin: 0 0 10px 0;
         text-align: center;
+        padding: 0 4%;
       }
 
       .header p {
@@ -229,6 +230,25 @@
         color: #D3D3D3;
         font-size: 12pt;
         line-height: 1.0em;
+      }
+
+      @media only screen and (max-width: 600px) {
+        .header h1 {
+          display: none;
+        }
+
+        label {
+          font-size: 14px;
+        }
+
+        .output h1 {
+          font-size: 28px;
+        }
+
+        .textbox {
+          height: 34px;
+          font-size: 14pt;
+        }
       }
 
     </style>
