@@ -237,8 +237,12 @@
       }
 
       @media only screen and (max-width: 600px) {
-        .header h1 {
+        .header, .smallhide{
           display: none;
+        }
+
+        .footer {
+          margin: 6px 0 0 0;
         }
 
         label {
@@ -313,9 +317,9 @@
         <div class="footer">    
           <p>Documentation / FAQ <a href="https://github.com/iamacup/saltypass/blob/master/FAQ.md">available here</a>.</p>
 
-          <p>Source code served from, and available on <a href="https://github.com/iamacup/saltypass">GitHub</a>.</p>
+          <p class="smallhide">Source code served from, and available on <a href="https://github.com/iamacup/saltypass">GitHub</a>.</p>
 
-          <p>Based on <a href="https://www.saltthepass.com/">saltthepass.com</a>.</p>
+          <p class="smallhide">Based on <a href="https://www.saltthepass.com/">saltthepass.com</a>.</p>
         </div>
           
       </div>   
