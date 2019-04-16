@@ -3,10 +3,9 @@
 <html>
   <head>
     <title>SaltyPass</title>
+
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
-    <link rel="stylesheet" href="assets/css/main.css" />
-    <noscript><link rel="stylesheet" href="assets/css/noscript.css" /></noscript>
 
     <!-- saltthepass.withdeps.min.js 02/02/2019 -->
     <script>
@@ -16,16 +15,75 @@
         
         var algo = 'sha3';
         var length = 16;
-        var alwaysIncludeSpecial = true;
         var special = '-';
 
-        var generate = function(masterPassword, domainName, salt) {
-          var saltedPassword = SaltThePass.saltthepass(algo, masterPassword, domainName, salt).substring(0, length);
+        function updateSliderLabel() {
+          document.getElementById("lengthslider").innerHTML = "Password Length (" + document.getElementById("length").value + ")";
+        }
 
-          if(alwaysIncludeSpecial === true && /^[0-9a-zA-Z]+$/.test(saltedPassword) === true) {
-            saltedPassword = saltedPassword.substring(0, length-1) + special;
+        window.onload = updateSliderLabel;
+
+        // this is the largest ascii code generated in a-zA-Z0-9
+        var largestASCIICodeValue = 122;
+
+        // this is the smallest value generated in a-zA-Z0-9
+        var smallestASCIICodeValue = 48;
+
+        var setCharAt = function (str, index, chr) {
+          if(index > str.length-1) return str;
+          
+          return str.substr(0,index) + chr + str.substr(index+1);
+        };
+
+        var generate = function(masterPassword, domainName, salt) {
+          var length = document.getElementById("length").value;
+          var maxStringScore = length * largestASCIICodeValue;
+          var minStringScore = length * smallestASCIICodeValue;
+          var saltedPassword = SaltThePass.saltthepass(algo, masterPassword, domainName, salt).substring(0, length);
+          var stringScore = 0;
+
+          // We work out the insert positions - note it is possible for a string to exceed largestASCIICodeValue like "zzzz-zzz"
+          for(let a=0; a<saltedPassword.length; a++) {
+            stringScore += saltedPassword.charCodeAt(a);
           }
 
+          var numberToInsert = Math.round(((stringScore-minStringScore) / (maxStringScore-minStringScore)) * 9, 10);
+
+          if(numberToInsert > 9) {
+            numberToInsert = 9;
+          }
+
+          var insertPositionBase = Math.round(((stringScore-minStringScore) / (maxStringScore-minStringScore)) * (length-1), 10);
+          var insertPositionNumber = 0;
+          var insertPositionSpecial = 1;
+
+          if(insertPositionBase > length-1) {
+            insertPositionBase = length-1;
+          }
+
+          if(insertPositionBase === length-1) {
+            insertPositionNumber = insertPositionBase-1;
+            insertPositionSpecial = insertPositionBase;
+          } else {
+            insertPositionNumber = insertPositionBase;
+            insertPositionSpecial = insertPositionBase+1;
+          }
+
+          // insert a number if we need to
+          var alwaysIncludeNumber = document.getElementById("number").checked;
+
+          if(alwaysIncludeNumber === true && !/\d/.test(saltedPassword)) {
+            saltedPassword = setCharAt(saltedPassword, insertPositionNumber, numberToInsert);
+          }
+
+          // insert a special character if we need to
+          var alwaysIncludeSpecial = document.getElementById("special").checked;
+
+          if(alwaysIncludeSpecial === true && /^[0-9a-zA-Z]+$/.test(saltedPassword) === true) {
+            saltedPassword = setCharAt(saltedPassword, insertPositionSpecial, special);
+          }
+
+          // return
           return saltedPassword;
         };
 
@@ -51,54 +109,187 @@
           output.innerHTML = pass;
         };
 
+        function sliderChange() {
+          updateSliderLabel();
+          calculateHash();
+        };
+
     </script>
 
+    <style>
+
+      body, html {
+        height: 100%;
+        margin: 0;
+        padding: 0;
+        font-family: 'Source Sans Pro', sans-serif;
+        font-weight: 400;
+        color: #777777;
+        font-size: 20pt;
+        line-height: 1.75em;
+      }
+
+      h1 {
+        font-weight: 400;
+        font-size: 28pt;
+      }
+
+      a:link {
+        color: #777777;
+      }
+
+      a:visited {
+        color: #777777;
+      }
+
+      a:hover {
+        color: #777777;
+      }
+
+      a:active {
+        color: #777777;
+      } 
+
+      label {
+        font-size: 17pt;
+        line-height: 1.2em;
+      }
+
+      .bg {
+        background-image: url("./bg.png");
+        height: 100%;
+        background-position: center;
+        background-repeat: no-repeat;
+        background-size: cover;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-direction: column;
+      }
+
+      .box {
+        background-color: white;
+        border: 2px solid #2d1f36;
+        width: 80%;
+        padding: 40px 0;
+      }
+
+      .input {
+        text-align: center;
+        padding: 6px 0;
+        align-self: center;
+      }
+
+      .checkbox {
+        padding-left: 10%;
+      }
+
+      .slider {
+        padding-left: 10%;
+      }
+
+      .output { 
+        text-align: center;
+        color: #800080;
+      }
+
+      .textbox {
+        width: 80%;
+        height: 42px;
+        font-size: 17pt;
+        -webkit-appearance: none;
+        border: 0;
+        background: #efefef;
+        -moz-transition: background-color .25s ease-in-out;
+        -webkit-transition: background-color .25s ease-in-out;
+        -ms-transition: background-color .25s ease-in-out;
+        transition: background-color .25s ease-in-out;
+        padding: 6px 10px;
+      }
+
+      .header {
+        color: white;
+        margin: 0 0 10px 0;
+        text-align: center;
+      }
+
+      .header p {
+        color: #D3D3D3;
+        font-size: 12pt;
+        line-height: 1.0em;
+      }
+
+      .footer {
+        width: 60%;
+        text-align: center;
+        margin: 40px 0 0 0;
+      }
+
+      .footer p {
+        color: #D3D3D3;
+        font-size: 12pt;
+        line-height: 1.0em;
+      }
+
+    </style>
+
   </head>
-  <body class="is-preload">
+  <body>
 
-    <!-- Wrapper-->
-      <div id="wrapper">
-        <header>
-          <h1 style="color:white;">SaltyPass</h1>
-        </header>
+    <div class="bg">
 
-        <!-- Main -->
-          <div id="main">
+        <div class="header">
+          <h1>SaltyPass</h1>
 
-            <!-- Contact -->
-              <article class="panel">
-                
-                <form action="#" method="post">
-                  <div>
-                    <div class="row">
-                      <div class="col-12">
-                        <input onkeyup="calculateHash()" type="password" name="masterpassword" id="masterpassword" placeholder="Master Password" />
-                      </div>
-                      <div class="col-12">
-                        <input onkeyup="calculateHash()" type="text" name="domainname" id="domainname" placeholder="Domain Name" />
-                      </div>
-                      <div class="col-12">
-                        <input onkeyup="calculateHash()" type="text" name="salt" id="salt" placeholder="Salt (optional)" />
-                      </div>
-                    </div>
-                  </div>
-                </form>
+          <p>A password generator that will help you generate unique, secure passwords for websites based on a single Master Password that you remember.</p>
+        </div>
 
-                <header style="text-align:center;">
-                  <h1 id="output"> Fill in the fields... </h1>
-                </header>
-              </article>
+        <div class="box">
 
-          </div>
+          <form action="#" method="post">
+        
+            <div class="input">
+              <input class="textbox" onkeyup="calculateHash()" type="password" name="masterpassword" id="masterpassword" placeholder="Master Password" />
+            </div>
+            <div class="input">
+              <input class="textbox" onkeyup="calculateHash()" type="text" name="domainname" id="domainname" placeholder="Domain Name" />
+            </div>
+            <div class="input">
+              <input class="textbox" onkeyup="calculateHash()" type="text" name="salt" id="salt" placeholder="Salt (optional)" />
+            </div>
 
-      </div>
+            <div class="slider">
+              <label for="length" id="lengthslider"></label>
+              <input type="range" id="length" name="length" min="6" max="30" value="16" oninput="sliderChange()">
+            </div>
 
-    <!-- Scripts -->
-      <script src="assets/js/jquery.min.js"></script>
-     
-      <script src="assets/js/breakpoints.min.js"></script>
+            <div class="checkbox">
+              <input type="checkbox" id="special" name="special" onchange="calculateHash()" checked>
+              <label for="special">Always include a special character</label>
+            </div>
 
-      <script src="assets/js/main.js"></script>
+            <div class="checkbox">
+              <input type="checkbox" id="number" name="number" onchange="calculateHash()" checked>
+              <label for="number">Always include a number</label>
+            </div>
+         
+          </form>
+
+          <header class="output">
+            <h1 id="output"> Fill in the fields... </h1>
+          </header>
+
+        </div>
+
+        <div class="footer">    
+          <p>Documentation / FAQ <a href="https://github.com/iamacup/saltypass">available here</a>.</p>
+
+          <p>Source code served from, and available on <a href="https://github.com/iamacup/saltypass">GitHub</a>.</p>
+
+          <p>Based on <a href="https://www.saltthepass.com/">saltthepass.com</a>.</p>
+        </div>
+          
+      </div>   
 
   </body>
 </html>
