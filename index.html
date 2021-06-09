@@ -83,7 +83,7 @@
         margin: 0 8px;
       }
 
-      h4 {
+      h4, h5, h6 {
         color: #26a69a;
       }
 
@@ -331,11 +331,40 @@
   <!-- Modal Structure -->
   <div id="modal1" class="modal">
     <div class="modal-content">
-      <h4>Modal Header</h4>
-      <p>A bunch of text</p>
+      <h4>Help & Information!</h4>
+
+      <p>SaltyPass helps you generate passwords for all of the websites you visit. This side does not actually store, save or manage any passwords for you. It uses a repeatable algorithm to generate unique passwords for anywhere you need. Instead of storing each website's password in a password manager or writing it down on a piece of paper, you can look it up (re-generate it) from anywhere you have internet access.</p>
+
+      <h4>Using this with a password manager / your browsers password storage</h4>
+
+      <p>If you fill in the Identifier / Domain field and the Master Password field - you can then press the menu icon in the top right, and click the save icon that appears. This will prompt the browser (or password manager if you use one) to store the domain/master password combination. This is NOT required, but is useful if you might forget your master password OR don't know where you have used this tool yet while you are migrating your passwords.</p>
+
+      <p>Remember, both Chrome and Firefox allow you to put a password on the browser before anyone can access your stored passwords - this is highly recommended!</p>
+
+      <h4>What are the fields?</h4>
+
+      <h6>Identifier / Domain</h6>
+      <p>The place you are generating a password for, could be <stong>www.google.com</stong> or simply <strong>google</strong>.</p>
+
+      <h6>Master Password</h6>
+      <p>This is a password that you NEVER put into any other website, you need to remember this, and only this!</p>
+
+      <h6>Salt</h6>
+      <p>An optional thing to generate a different password for the given identifier - i.e. if you are forced to reset your password, you could use 1, 2, 3, 4 etc. as the salts.</p>
+
+      <h6>Compatibility</h6>
+      <p>The site was updated on 09 Jun 2021 which breaks some old passwords, this was in order to support more out of the box passwords. The old version is still (and will always be) available - use the menu button in the top right and press the left arrow.</p>
+
+      <h6>Open Source</h6>
+      <p>Sourcecode for this project can be found at our <a href="https://github.com/iamacup/saltypass">GitHub page</a>.</p>
+
+      <h6>More Details</h6>
+      <p>This project is based on SaltThePass, which has a very good <a href="https://saltthepass.com/#help">readme here</a>.</p>
+
+
     </div>
     <div class="modal-footer">
-      <a href="#!" class="modal-close waves-effect waves-green btn-flat">Agree</a>
+      <a href="#!" class="modal-close waves-effect waves-green btn-flat">Close</a>
     </div>
   </div>
 
@@ -345,29 +374,23 @@
         <form id="form-wrapper" method="post">
 
 
-<div class="fixed-action-btn">
-  <a class="btn-floating btn-large waves-effect waves-purple">
-    <i class="large material-icons">mode_edit</i>
-  </a>
-  <ul>
-    <li><a href="#modal1" class="btn-floating waves-effect waves-purple deep-orange modal-trigger"><i class="material-icons">info</i></a></li>
-    <li><a href="./old.html" class="btn-floating waves-effect waves-purple deep-orange"><i class="material-icons">arrow_back</i></a></li>
-    <li><button class="btn-floating waves-effect waves-purple deep-orange" type="submit" name="action"><i class="material-icons">save</i></button></li>
-  </ul>
-</div>
-      
-
-      
-
+          <div class="fixed-action-btn">
+            <a class="btn-floating btn-large waves-effect waves-purple">
+              <i class="large material-icons">menu</i>
+            </a>
+            <ul>
+              <li><a href="#modal1" class="btn-floating waves-effect waves-purple deep-orange modal-trigger"><i class="material-icons">info</i></a></li>
+              <li><a href="./old.html" class="btn-floating waves-effect waves-purple deep-orange"><i class="material-icons">arrow_back</i></a></li>
+              <li><button class="btn-floating waves-effect waves-purple deep-orange" type="submit" name="action"><i class="material-icons">save</i></button></li>
+            </ul>
+          </div>
+    
 
           <div class="row">
             <div class="col s12">
               <h4>SaltyPass</h4>
             </div>
           </div>
-
-
-         
 
           <div class="row">
             <div class="col s12">
@@ -387,16 +410,6 @@
               </div>
             </div>
           </div>
-
-        <!--   <div class="row">
-            <div class="col s12">
-              <div class='input-field'>
-               <button class="btn-floating waves-effect waves-purple" type="submit" name="action">
-                  <i class="material-icons">save</i>
-                </button>
-              </div>
-            </div>
-          </div> -->
 
       </form>
 
@@ -550,12 +563,27 @@ var sliderInstance = noUiSlider.create(slider, {
 
 $(document).ready(function(){
     $('.collapsible').collapsible();
-  })
+});
 
  $(document).ready(function(){
     $('.fixed-action-btn').floatingActionButton({
       direction: 'left'
     });
+
+    var debouncedAction = debounce(function() {
+      var instance = M.FloatingActionButton.getInstance(($('.fixed-action-btn').get()[0]));
+        if(instance.isOpen === true) {
+          instance.close();
+        } else {
+          instance.open();
+        }
+
+    }, 100);
+
+    $('.fixed-action-btn').on("touchstart click", function() {
+        debouncedAction();              
+    });
+        
   });
 
  $(document).ready(function(){
