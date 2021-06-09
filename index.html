@@ -44,6 +44,7 @@
 
       .btn-block {
         width: 100%;
+        text-transform: none !important;
       }
 
       #toast-container {
@@ -53,16 +54,6 @@
         left:10%;  
         min-width: 80% !important;
       }
-
-
-      /*.slider-container {
-        padding-top: 28px;
-      }*/
-
-      /*.noUi-tooltip {
-        top: 32px;
-        bottom: unset !important;
-      }*/
     </style>
 
     <!-- saltthepass.withdeps.min.js 02/02/2019 -->
@@ -112,12 +103,12 @@
 
         var getCanGenerateMessage = function() {
           var props = getProperties();
-          var pass = "FILL IN THE FIELDS";
+          var pass = "Fill in the fields";
 
           if(props.masterPassword.length === 0) {
-            pass = "ENTER MASTER PASSWORD";
+            pass = "Enter a Master Password";
           } else if (props.domainName.length === 0) {
-            pass = "ENTER IDENTIFIER / DOMAIN";
+            pass = "Enter an Identifier / Domain";
           } else {
             pass = "";
           }
@@ -154,7 +145,6 @@
               }
 
           });
-
 
         }
 
@@ -242,6 +232,7 @@
 
 
       <h5>SaltyPass.com</h5>
+      <br/>
 
       <div class="row">
         <div class="col s12">
@@ -270,7 +261,6 @@
           </div>
         </div>
       </div>
-
 
       <div class="row no-margin-bottom">
         <div class="col 12">
@@ -323,11 +313,11 @@
       <div class="row"> <br/> <br/> </div>
 
       <div class="row">
-      <div class="col s10 offset-s1 m8 offset-m2">
-      <a class="waves-effect waves-light btn-large btn-block" id="password-output" name="password-output">Fill in the fields...</a>
-      <br/>
-      <p class="center-align">Press password to copy to clipboard</p>
-      </div>
+        <div class="col s10 offset-s1 m8 offset-m2">
+          <a class="waves-effect waves-light btn-large btn-block" id="password-output" name="password-output">Fill in the fields...</a>
+          <br/>
+          <p class="center-align">Press password to copy to clipboard</p>
+        </div>
       </div>     
 
 
@@ -380,7 +370,6 @@ var sliderInstance = noUiSlider.create(slider, {
 });
 
 startSalty();
-
 
 </script>
 </body>
