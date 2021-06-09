@@ -86,6 +86,12 @@
       h4 {
         color: #26a69a;
       }
+
+      .fixed-action-btn{
+        /*right: auto; */
+        top: 23px;
+        bottom: unset;
+      }
     </style>
 
     <!-- saltthepass.withdeps.min.js 02/02/2019 -->
@@ -321,44 +327,77 @@
 
 <body>
 
+
+  <!-- Modal Structure -->
+  <div id="modal1" class="modal">
+    <div class="modal-content">
+      <h4>Modal Header</h4>
+      <p>A bunch of text</p>
+    </div>
+    <div class="modal-footer">
+      <a href="#!" class="modal-close waves-effect waves-green btn-flat">Agree</a>
+    </div>
+  </div>
+
   <div class="container">
-      <div class="center-align"><h4>SaltyPass</h4></div>
+      
    
-   <form id="form-wrapper" method="post">
+        <form id="form-wrapper" method="post">
+
+
+<div class="fixed-action-btn">
+  <a class="btn-floating btn-large waves-effect waves-purple">
+    <i class="large material-icons">mode_edit</i>
+  </a>
+  <ul>
+    <li><a href="#modal1" class="btn-floating waves-effect waves-purple deep-orange modal-trigger"><i class="material-icons">info</i></a></li>
+    <li><button class="btn-floating waves-effect waves-purple deep-orange" type="submit" name="action"><i class="material-icons">save</i></button></li>
+  </ul>
+</div>
+      
+
+      
+
+
+          <div class="row">
+            <div class="col s12">
+              <h4>SaltyPass</h4>
+            </div>
+          </div>
+
 
          
-       
 
-      <div class="row">
-        <div class="col s12">
-          <div class="input-field">
-            <input id="username" name="username" type="text" class="validate" autocomplete="username">
-            <label for="username">Identifier / Domain</label>
+          <div class="row">
+            <div class="col s12">
+              <div class="input-field">
+                <input id="username" name="username" type="text" class="validate" autocomplete="username">
+                <label for="username">Identifier / Domain</label>
+              </div>
+            </div>
           </div>
-        </div>
-      </div>
 
-      <div class="row">
-        <div class="col s12">
-          <div class='input-field'>
-            <input class='validate' type='password' name='password' id='password' autocomplete="current-password" />
-            <label for='password'>Master Password</label>
-            <span toggle="#password" class="field-icon toggle-password"><span class="material-icons">visibility</span></span>
+          <div class="row">
+            <div class="col s12">
+              <div class='input-field'>
+                <input class='validate' type='password' name='password' id='password' autocomplete="current-password" />
+                <label for='password'>Master Password</label>
+                <span toggle="#password" class="field-icon toggle-password"><span class="material-icons">visibility</span></span>
+              </div>
+            </div>
           </div>
-        </div>
-      </div>
 
-      <div class="row">
-        <div class="col s12">
-          <div class='input-field'>
-           <button class="btn-floating waves-effect waves-purple" type="submit" name="action">
-              <i class="material-icons">save</i>
-            </button>
-          </div>
-        </div>
-      </div>
+        <!--   <div class="row">
+            <div class="col s12">
+              <div class='input-field'>
+               <button class="btn-floating waves-effect waves-purple" type="submit" name="action">
+                  <i class="material-icons">save</i>
+                </button>
+              </div>
+            </div>
+          </div> -->
 
-         </form>
+      </form>
 
        
 
@@ -515,6 +554,16 @@ var sliderInstance = noUiSlider.create(slider, {
 $(document).ready(function(){
     $('.collapsible').collapsible();
   })
+
+ $(document).ready(function(){
+    $('.fixed-action-btn').floatingActionButton({
+      direction: 'left'
+    });
+  });
+
+ $(document).ready(function(){
+    $('.modal').modal();
+  });
 
 startSalty();
 
