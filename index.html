@@ -132,23 +132,36 @@
         }
 
         var listenForPasswordButtonPress = function() {
+
           $('#password-output').click(function() {
-
-              var pass = getCanGenerateMessage();
-
-              if(pass.length === 0) {
-                var $temp = $("<input>");
-                $("body").append($temp);
-                $temp.val($('#password-output').text().trim()).select();
-                document.execCommand("copy");
-                $temp.remove();
-
-                M.toast({html: 'Password coppied to clipboard!'});
-              } else {
-                M.toast({html: pass});
-              }
-
+            M.toast({html: 'CLICK'});
           });
+
+          $('#password-output').on("click", function() {
+            M.toast({html: 'CLICK 2'});
+          });
+
+           $('#password-output').on("mouseup", function() {
+            M.toast({html: 'CLICK 3'});
+          });
+
+//           $('#password-output').click(function() {
+// 
+//               var pass = getCanGenerateMessage();
+// 
+//               if(pass.length === 0) {
+//                 var $temp = $("<input>");
+//                 $("body").append($temp);
+//                 $temp.val($('#password-output').text().trim()).select();
+//                 document.execCommand("copy");
+//                 $temp.remove();
+// 
+//                 M.toast({html: 'Password coppied to clipboard!'});
+//               } else {
+//                 M.toast({html: pass});
+//               }
+// 
+//           });
 
         }
 
@@ -318,7 +331,7 @@
 
       <div class="row">
         <div class="col s12 m10 offset-m1 l8 offset-l2">
-          <a class="btn-large btn-block" id="password-output" name="password-output">Fill in the fields...</a>
+          <a class="waves-effect waves-purple btn-large btn-block" id="password-output" name="password-output">Fill in the fields...</a>
           <br/>
           <p class="center-align">Press password to copy to clipboard</p>
         </div>
