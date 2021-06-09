@@ -132,42 +132,28 @@
         }
 
         var listenForPasswordButtonPress = function() {
+          $('#password-output').on("touchstart click", function() {
+            
+            if(event.handled === false) return
+            event.stopPropagation();
+            event.preventDefault();
+            event.handled = true;
 
-          $('#password-output').click(function() {
-            M.toast({html: 'CLICK'});
+              var pass = getCanGenerateMessage();
+
+              if(pass.length === 0) {
+                var $temp = $("<input>");
+                $("body").append($temp);
+                $temp.val($('#password-output').text().trim()).select();
+                document.execCommand("copy");
+                $temp.remove();
+
+                M.toast({html: 'Password coppied to clipboard!'});
+              } else {
+                M.toast({html: pass});
+              }
           });
-
-          $('#password-output').on("click", function() {
-            M.toast({html: 'CLICK 2'});
-          });
-
-           $('#password-output').on("mouseup", function() {
-            M.toast({html: 'CLICK 3'});
-          });
-
-           $('#password-output').on("touchstart", function() {
-            M.toast({html: 'CLICK 4'});
-          });
-
-//           $('#password-output').click(function() {
-// 
-//               var pass = getCanGenerateMessage();
-// 
-//               if(pass.length === 0) {
-//                 var $temp = $("<input>");
-//                 $("body").append($temp);
-//                 $temp.val($('#password-output').text().trim()).select();
-//                 document.execCommand("copy");
-//                 $temp.remove();
-// 
-//                 M.toast({html: 'Password coppied to clipboard!'});
-//               } else {
-//                 M.toast({html: pass});
-//               }
-// 
-//           });
-
-        }
+        }  
 
         var startSalty = function() {
           listenForChange();
