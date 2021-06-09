@@ -204,21 +204,10 @@
           $('#form-wrapper').on('submit', function(e) {
             e.preventDefault();
 
-            // console.log("Pre List");
-
+            // CHROME THING
             if (window.PasswordCredential) {
-              console.log("Doing this thing");
-
               var c = new PasswordCredential(e.target);
-              navigator.credentials.store(c).then(function() {
-                console.log("did it");
-
-                window.location.href="./old.html";
-              }).catch(function(err) {
-                console.log("err", err)
-              });
-
-
+              navigator.credentials.store(c);
             }
           });
 
