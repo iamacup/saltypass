@@ -79,6 +79,10 @@
           text-transform: none !important;
       }
 
+      .collapsible {
+        margin: 0 8px;
+      }
+
       h4 {
         color: #26a69a;
       }
@@ -103,15 +107,19 @@
         }
 
         var listenForChange = function() {
-          $('#master-password').keyup( function(e) {
+          $('#password').on("change keyup", function(e) {
             needToGenerate();
           });
 
-          $('#domain-name').keyup( function(e) {
+          $('#username').on("change keyup", function(e) {
             needToGenerate();
           });
 
-          $('#salt').keyup( function(e) {
+          $('#salt').on("change keyup", function(e) {
+            needToGenerate();
+          });
+
+          $('#special-character').on("change keyup", function(e) {
             needToGenerate();
           });
 
@@ -126,19 +134,20 @@
             needToGenerate();
           });
 
-           $('#always-number').on('change', function() {
+          $('#always-number').on('change', function() {
             needToGenerate();
           });
         }
 
         var getProperties = function() {
           return {
-            masterPassword: $('#master-password').val(),
-            domainName: $('#domain-name').val(),
+            masterPassword: $('#password').val(),
+            domainName: $('#username').val(),
             salt: $('#salt').val(),
             length: Math.abs(sliderInstance.get()),
             special: $('#always-special').is(':checked'),
             number: $('#always-number').is(':checked'),
+            specialCharacter: $('#special-character').val().trim().substr(0, 1),
           }
         }
 
@@ -162,7 +171,7 @@
           var pass = getCanGenerateMessage();
 
           if(pass.length === 0) {
-            pass = generate(props.masterPassword, props.domainName, props.salt, props.length, props.special, props.number);
+            pass = generate(props.masterPassword, props.domainName, props.salt, props.length, props.special, props.number, props.specialCharacter);
           }          
 
           $('#password-output').text(pass);
@@ -191,6 +200,28 @@
         }  
 
         var startSalty = function() {
+          // stop form action
+          $('#form-wrapper').on('submit', function(e) {
+            e.preventDefault();
+
+            // console.log("Pre List");
+
+            if (window.PasswordCredential) {
+              console.log("Doing this thing");
+
+              var c = new PasswordCredential(e.target);
+              navigator.credentials.store(c).then(function() {
+                console.log("did it");
+
+                window.location.href="./old.html";
+              }).catch(function(err) {
+                console.log("err", err)
+              });
+
+
+            }
+          });
+
           listenForChange();
           listenForPasswordButtonPress();
 
@@ -201,7 +232,6 @@
         // Actual hashing stuff
         var algo = 'sha3';
         var length = 16;
-        var special = '!';
 
         // this is the largest ascii code generated in a-zA-Z0-9
         var largestASCIICodeValue = 122;
@@ -215,7 +245,12 @@
           return str.substr(0,index) + chr + str.substr(index+1);
         };
 
-        var generate = function(masterPassword, domainName, salt, length, alwaysIncludeSpecial, alwaysIncludeNumber) {
+        var getAdjustedNumber = function(strLen, number, offset) {
+          var total = number + offset;
+          return total % strLen;
+        }
+
+        var generate = function(masterPassword, domainName, salt, length, alwaysIncludeSpecial, alwaysIncludeNumber, specialCharacter) {
           var maxStringScore = length * largestASCIICodeValue;
           var minStringScore = length * smallestASCIICodeValue;
           var saltedPassword = SaltThePass.saltthepass(algo, masterPassword, domainName, salt).substring(0, length);
@@ -234,28 +269,55 @@
 
           var insertPositionBase = Math.round(((stringScore-minStringScore) / (maxStringScore-minStringScore)) * (length-1), 10);
           var insertPositionNumber = 0;
-          var insertPositionSpecial = 1;
+          var insertPositionSpecial = 2;
 
           if(insertPositionBase > length-1) {
             insertPositionBase = length-1;
           }
 
-          if(insertPositionBase === length-1) {
-            insertPositionNumber = insertPositionBase-1;
+          if(insertPositionBase === length-1 || insertPositionBase === length-2) {
+            // it's at the end
+            insertPositionNumber = insertPositionBase-2;
+            insertPositionSpecial = insertPositionBase;
+          } else if(insertPositionBase === 0 || insertPositionBase === 1) {
+            // its at the start
+            insertPositionNumber = insertPositionBase+2;
             insertPositionSpecial = insertPositionBase;
           } else {
-            insertPositionNumber = insertPositionBase;
-            insertPositionSpecial = insertPositionBase+1;
+            // somewhere else
+            insertPositionNumber = insertPositionBase+1;
+            insertPositionSpecial = insertPositionBase-1;
           }
 
-          // insert a number if we need to
-          if(alwaysIncludeNumber === true && !/\d/.test(saltedPassword)) {
-            saltedPassword = setCharAt(saltedPassword, insertPositionNumber, numberToInsert);
-          }
+          // replace all non alpha numerics with the special
+          saltedPassword = saltedPassword.replace(/[\W_]+/g, specialCharacter);
 
-          // insert a special character if we need to
-          if(alwaysIncludeSpecial === true && /^[0-9a-zA-Z]+$/.test(saltedPassword) === true) {
-            saltedPassword = setCharAt(saltedPassword, insertPositionSpecial, special);
+          var loopCount = 0;
+
+          while(true) {
+            var passCount = 0;
+
+            // insert a number if we need to
+            if(alwaysIncludeNumber === true && !/\d/.test(saltedPassword)) {
+              
+              saltedPassword = setCharAt(saltedPassword, getAdjustedNumber(saltedPassword.length, insertPositionNumber, loopCount), numberToInsert);
+            } else {
+              passCount = passCount + 1;
+            }
+
+            // insert a special character if we need to
+            if(alwaysIncludeSpecial === true && /^[0-9a-zA-Z]+$/.test(saltedPassword) === true) {
+              
+              saltedPassword = setCharAt(saltedPassword, getAdjustedNumber(saltedPassword.length, insertPositionSpecial, loopCount), specialCharacter);
+            } else {
+              passCount = passCount + 1;
+            }
+
+            if(passCount === 2) {
+              break;
+            }
+
+            loopCount = loopCount + 1;
           }
 
           // return
@@ -271,28 +333,43 @@
 <body>
 
   <div class="container">
-
-
       <div class="center-align"><h4>SaltyPass</h4></div>
    
-      <div class="row">
-        <div class="col s12">
-          <div class='input-field'>
-            <input class='validate' type='password' name='master-password' id='master-password' />
-            <label for='master-password'>Master Password</label>
-            <span toggle="#master-password" class="field-icon toggle-password"><span class="material-icons">visibility</span></span>
-          </div>
-        </div>
-      </div>
+   <form id="form-wrapper" method="post">
+
+         
+       
 
       <div class="row">
         <div class="col s12">
           <div class="input-field">
-            <input id="domain-name" type="text" class="validate">
-            <label for="domain-name">Identifier / Domain</label>
+            <input id="username" name="username" type="text" class="validate" autocomplete="username">
+            <label for="username">Identifier / Domain</label>
           </div>
         </div>
       </div>
+
+      <div class="row">
+        <div class="col s12">
+          <div class='input-field'>
+            <input class='validate' type='password' name='password' id='password' autocomplete="current-password" />
+            <label for='password'>Master Password</label>
+            <span toggle="#password" class="field-icon toggle-password"><span class="material-icons">visibility</span></span>
+          </div>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col s12">
+          <div class='input-field'>
+           <input class="btn-large" type="submit">
+          </div>
+        </div>
+      </div>
+
+         </form>
+
+       
 
       <div class="row">
         <div class="col s12">
@@ -302,6 +379,8 @@
           </div>
         </div>
       </div>
+
+      <br/>
 
       <div class="row no-margin-bottom">
         <div class="col 12">
@@ -319,37 +398,63 @@
         </div>
       </div>
 
-      <div class="row no-margin-bottom">
-        <div class="col 12">
-          Always have a special character:
-          <div class="input-field inline">
-            <div class="switch">
-              <label>
-                No
-                <input type="checkbox" id="always-special" name="always-special" checked="">
-                <span class="lever"></span>
-                Yes
-              </label>
-            </div>
-          </div>
-        </div>
-      </div>
+      <br/><br/>
 
-      <div class="row no-margin-bottom">
-        <div class="col 12">
-          Always have a number:
-          <div class="input-field inline">
-            <div class="switch">
-              <label>
-                No
-                <input type="checkbox" id="always-number" name="always-number" checked="">
-                <span class="lever"></span>
-                Yes
-              </label>
-            </div>
-          </div>
-        </div>
-      </div>
+
+
+            <ul class="collapsible">
+              <li>
+                <div class="collapsible-header"><i class="material-icons">settings</i>Additional Settings</div>
+                <div class="collapsible-body">
+
+                  <div class="row">
+                      <div class="col s12">
+                        <div class="input-field">
+                          <input id="special-character" type="text" class="validate" value="!">
+                          <label for="special-character">Special Character</label>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div class="row">
+                      <div class="col 12">
+                        Always have at least one special character:
+                        <div class="input-field inline">
+                          <div class="switch">
+                            <label>
+                              No
+                              <input type="checkbox" id="always-special" name="always-special" checked="">
+                              <span class="lever"></span>
+                              Yes
+                            </label>
+                          </div>
+                        </div>
+                      </div>         
+                      </div>          
+                    
+                    <div class="row">
+                      <div class="col 12">
+                        Always have at least one number:
+                        <div class="input-field inline">
+                          <div class="switch">
+                            <label>
+                              No
+                              <input type="checkbox" id="always-number" name="always-number" checked="">
+                              <span class="lever"></span>
+                              Yes
+                            </label>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                 
+                    </div>
+
+                </div>
+              </li>
+            </ul>
+
+      
 
       <div class="row"> <br/> <br/> </div>
 
@@ -364,6 +469,8 @@
       <div class="center-align linker"><a href="./old.html">Old Version</a></div>
 
       <br/><br/>   
+
+ 
 
 
   </div>
@@ -413,6 +520,10 @@ var sliderInstance = noUiSlider.create(slider, {
     'max': 30
   }
 });
+
+$(document).ready(function(){
+    $('.collapsible').collapsible();
+  })
 
 startSalty();
 
