@@ -16,6 +16,26 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.slim.min.js"></script>
 
     <style type="text/css">
+       /* unvisited link */
+      .linker a:link {
+        color: #26a69a;
+      }
+
+      /* visited link */
+      .linker a:visited {
+        color: #26a69a;
+      }
+
+      /* mouse over link */
+      .linker a:hover {
+        color: #26a69a;
+      }
+
+      /* selected link */
+      .linker a:active {
+        color: #26a69a;
+      } 
+
       span.field-icon {
         float: right;
         position: absolute;
@@ -181,7 +201,7 @@
         // Actual hashing stuff
         var algo = 'sha3';
         var length = 16;
-        var special = '-';
+        var special = '!';
 
         // this is the largest ascii code generated in a-zA-Z0-9
         var largestASCIICodeValue = 122;
@@ -338,6 +358,10 @@
           <a class="waves-effect waves-purple btn-large btn-block" id="password-output" name="password-output">Fill in the fields...</a>
         </div>
       </div>  
+
+      <br/>
+
+      <div class="center-align linker"><a href="./old.html">Old Version</a></div>
 
       <br/><br/>   
 
