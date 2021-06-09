@@ -48,9 +48,9 @@
       }
 
       #toast-container {
-        top: auto !important;
-        right: auto !important;
-        bottom: 10%;
+        top: 1% !important;
+        /*right: auto !important;*/
+        bottom: unset !important;
         left:10%;  
         min-width: 80% !important;
       }
@@ -144,9 +144,9 @@
                 document.execCommand("copy");
                 $temp.remove();
 
-                M.toast({html: '<span class="center-align">COPPIED TO CLIPBOARD!</span>'});
+                M.toast({html: 'Password coppied to clipboard!'});
               } else {
-                M.toast({html: '<span class="center-align">' + pass + '</span>'});
+                M.toast({html: pass});
               }
 
           });
