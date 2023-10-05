@@ -153,6 +153,8 @@
         }
 
         var getProperties = function() {
+          var specialTmp = $('#special-character').val().trim();
+
           return {
             masterPassword: $('#password').val(),
             domainName: $('#username').val(),
@@ -160,7 +162,7 @@
             length: Math.abs(sliderInstance.get()),
             special: $('#always-special').is(':checked'),
             number: $('#always-number').is(':checked'),
-            specialCharacter: $('#special-character').val().trim().substr(0, 1),
+            specialCharacter: specialTmp.length > 0 ? specialTmp.substr(0, 1) : '',
           }
         }
 
@@ -297,25 +299,32 @@
           var loopCount = 0;
 
           while(true) {
-            var passCount = 0;
+            var numberPass = false;
+            var specailPass = false;
 
-            // insert a number if we need to
-            if(alwaysIncludeNumber === true && !/\d/.test(saltedPassword)) {
-              
-              saltedPassword = setCharAt(saltedPassword, getAdjustedNumber(saltedPassword.length, insertPositionNumber, loopCount), numberToInsert);
+            if(alwaysIncludeNumber === true) {
+              if(!/\d/.test(saltedPassword)) {
+                saltedPassword = setCharAt(saltedPassword, getAdjustedNumber(saltedPassword.length, insertPositionNumber, loopCount), numberToInsert);
+              } else {
+                numberPass = true;
+              }
             } else {
-              passCount = passCount + 1;
+              numberPass = true;
             }
 
-            // insert a special character if we need to
-            if(alwaysIncludeSpecial === true && /^[0-9a-zA-Z]+$/.test(saltedPassword) === true) {
-              
-              saltedPassword = setCharAt(saltedPassword, getAdjustedNumber(saltedPassword.length, insertPositionSpecial, loopCount), specialCharacter);
+            if(alwaysIncludeSpecial === true) {
+              if(specialCharacter.length === 0) {
+                specailPass = true;
+              } else if(/^[0-9a-zA-Z]+$/.test(saltedPassword) === true) {
+                saltedPassword = setCharAt(saltedPassword, getAdjustedNumber(saltedPassword.length, insertPositionSpecial, loopCount), specialCharacter);
+              } else {
+                specailPass = true;
+              }
             } else {
-              passCount = passCount + 1;
+              specailPass = true;
             }
 
-            if(passCount === 2) {
+            if(numberPass && specailPass) {
               break;
             }
 
